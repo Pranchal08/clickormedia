@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ClickOrMedia | Creative Agency & Performance Growth Engine</title>
+
+  <!-- Luxury Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Three.js & GSAP Suite -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --luxury-black: #020408;
+      --luxury-obsidian: #070a12;
+      --gold-primary: #dfba73;
+      --gold-glow: #fae4aa;
+      --gold-deep: #9d7837;
+      --amber-accent: #ff9d42;
+      --text-pure: #f8fafc;
+      --text-soft: #94a3b8;
+      --border-gold: rgba(223, 186, 115, 0.28);
+      --gold-gradient: linear-gradient(135deg, #dfba73 0%, #fae4aa 50%, #9d7837 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--luxury-black);
+      color: var(--text-pure);
+      overflow-x: hidden;
+      overflow-y: hidden;
+      line-height: 1.6;
+      perspective: 1600px;
+    }
+
+    /* -------------------------------------------------------------
+       1. AUTOMATIC 3D INTRO OVERLAY
+    ------------------------------------------------------------- */
+    #intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: radial-gradient(circle at center, #0f1628 0%, #020408 90%);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      transition: opacity 1s cubic-bezier(0.77, 0, 0.175, 1), visibility 1s;
+    }
+
+    #intro-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .intro-hud {
+      text-align: center;
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .intro-telemetry {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.68rem, 1.8vw, 0.82rem);
+      color: var(--gold-primary);
+      letter-spacing: clamp(2px, 0.8vw, 4px);
+      text-transform: uppercase;
+      margin-bottom: clamp(0.8rem, 2.5vh, 1.4rem);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(223, 186, 115, 0.06);
+      padding: 6px 18px;
+      border-radius: 30px;
+      border: 1px solid rgba(223, 186, 115, 0.18);
+    }
+
+    .intro-telemetry .pulse-gem {
+      width: 7px;
+      height: 7px;
+      background: var(--gold-primary);
+      box-shadow: 0 0 10px var(--gold-primary);
+      animation: rotateGem 3s infinite linear;
+      flex-shrink: 0;
+    }
+
+    @keyframes rotateGem {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(180deg) scale(1.3); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .intro-main-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 6.5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: clamp(0.8rem, 2vh, 1.2rem);
+      letter-spacing: clamp(1px, 0.4vw, 2.5px);
+    }
+
+    .intro-main-title span {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 35px rgba(223, 186, 115, 0.4);
+    }
+
+    .intro-desc {
+      font-size: clamp(0.88rem, 2.2vw, 1.08rem);
+      color: var(--text-soft);
+      max-width: 560px;
+      margin: 0 auto clamp(1.4rem, 3.5vh, 2.2rem) auto;
+      line-height: 1.7;
+    }
+
+    .intro-progress-container {
+      width: clamp(200px, 60vw, 300px);
+      height: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-gold);
+      border-radius: 20px;
+      margin: 0 auto clamp(0.8rem, 2vh, 1.2rem) auto;
+      overflow: hidden;
+    }
+
+    .intro-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 12px var(--gold-primary);
+      border-radius: 20px;
+      transition: width 0.08s linear;
+    }
+
+    .intro-counter {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.72rem, 1.8vw, 0.82rem);
+      color: var(--gold-primary);
+      letter-spacing: 2px;
+    }
+
+    /* -------------------------------------------------------------
+       2. FULLSCREEN 360° WEBGL CANVAS
+    ------------------------------------------------------------- */
+    #spatial-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      cursor: grab;
+    }
+
+    #spatial-canvas:active {
+      cursor: grabbing;
+    }
+
+    .viewport-content-layer {
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+      transform-style: preserve-3d;
+      opacity: 0;
+      transform: translateY(40px) scale(0.97);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .viewport-content-layer.revealed {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .clickable-ui {
+      pointer-events: auto;
+    }
+
+    /* -------------------------------------------------------------
+       3. SLIM 3D FLOATING NAVBAR
+    ------------------------------------------------------------- */
+    .header-floating-wrapper {
+      position: fixed;
+      top: 12px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 1000;
+      padding: 0 1.5rem;
+      transform-style: preserve-3d;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1160px;
+      height: 52px;
+      padding: 0 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(8, 12, 20, 0.88);
+      border: 1px solid var(--border-gold);
+      border-radius: 40px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(223, 186, 115, 0.12);
+      transform-style: preserve-3d;
+      animation: headerFloat 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes headerFloat {
+      0% { transform: translateY(0px) rotateX(0deg); }
+      100% { transform: translateY(-5px) rotateX(4deg); }
+    }
+
+    .brand-logo-3d {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      white-space: nowrap;
+    }
+
+    .brand-logo-3d span {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cube-holo-3d {
+      width: 15px;
+      height: 15px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotateHoloCube 6s infinite linear;
+      flex-shrink: 0;
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border: 1px solid var(--gold-primary);
+      background: rgba(223, 186, 115, 0.15);
+    }
+
+    .cube-face:nth-child(1) { transform: translateZ(7.5px); }
+    .cube-face:nth-child(2) { transform: rotateY(180deg) translateZ(7.5px); }
+    .cube-face:nth-child(3) { transform: rotateY(90deg) translateZ(7.5px); }
+    .cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(7.5px); }
+    .cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(7.5px); }
+    .cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(7.5px); }
+
+    @keyframes rotateHoloCube {
+      0% { transform: rotateX(0deg) rotateY(0deg); }
+      100% { transform: rotateX(360deg) rotateY(360deg); }
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+    }
+
+    nav a {
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(223, 186, 115, 0.6);
+    }
+
+    .btn-spatial-primary {
+      background: var(--gold-gradient);
+      color: #030509;
+      font-weight: 800;
+      padding: 0.48rem 1.15rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 0 18px rgba(223, 186, 115, 0.35);
+      border: 1px solid var(--gold-primary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-spatial-primary:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 30px rgba(223, 186, 115, 0.6);
+    }
+
+    .btn-spatial-ghost {
+      background: rgba(223, 186, 115, 0.05);
+      color: var(--gold-primary);
+      border: 1px solid var(--border-gold);
+      padding: 0.85rem 1.9rem;
+      border-radius: 40px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      backdrop-filter: blur(14px);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .btn-spatial-ghost:hover {
+      background: rgba(223, 186, 115, 0.18);
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 25px rgba(223, 186, 115, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .char-span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(12px) rotateX(90deg) scale(0.5);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .char-span.is-visible {
+      opacity: 1;
+      transform: translateY(0px) rotateX(0deg) scale(1);
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 90px 0;
+      position: relative;
+    }
+
+    /* -------------------------------------------------------------
+       4. HERO SECTION
+    ------------------------------------------------------------- */
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      gap: 3.5rem;
+      width: 100%;
+    }
+
+    .spatial-pill-3d {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 20px;
+      border-radius: 30px;
+      background: rgba(223, 186, 115, 0.08);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+      box-shadow: 0 0 20px rgba(223, 186, 115, 0.2);
+      transform-style: preserve-3d;
+      animation: pillContinuous3D 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pillContinuous3D {
+      0% { transform: translateY(0px) rotateX(0deg) translateZ(10px); }
+      100% { transform: translateY(-8px) rotateX(12deg) translateZ(28px); }
+    }
+
+    .kinetic-3d-title {
+      font-family: 'Cinzel', serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 1.4rem;
+      letter-spacing: 1px;
+      transform-style: preserve-3d;
+      animation: heroTitleOrbit 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroTitleOrbit {
+      0% {
+        transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);
+        text-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      }
+      50% {
+        transform: perspective(1000px) rotateX(5deg) rotateY(-4deg) translateY(-8px);
+        text-shadow: 0 15px 35px rgba(223, 186, 115, 0.25);
+      }
+      100% {
+        transform: perspective(1000px) rotateX(-4deg) rotateY(4deg) translateY(-4px);
+        text-shadow: 0 20px 45px rgba(223, 186, 115, 0.4);
+      }
+    }
+
+    .kinetic-3d-title .glow-highlight {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      animation: textShimmerSweep 4.5s linear infinite;
+    }
+
+    @keyframes textShimmerSweep {
+      0% { filter: drop-shadow(0 0 10px rgba(223, 186, 115, 0.3)); }
+      50% { filter: drop-shadow(0 0 35px rgba(223, 186, 115, 0.8)); }
+      100% { filter: drop-shadow(0 0 10px rgba(223, 186, 115, 0.3)); }
+    }
+
+    .hero-subtext-3d {
+      font-size: 1.12rem;
+      color: var(--text-soft);
+      margin-bottom: 2.4rem;
+      max-width: 560px;
+      line-height: 1.8;
+      transform-style: preserve-3d;
+      animation: subtextFloat3D 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes subtextFloat3D {
+      0% { transform: translateY(0px) translateZ(5px); }
+      100% { transform: translateY(-6px) translateZ(22px); }
+    }
+
+    .hero-btn-container {
+      display: flex;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+      perspective: 1000px;
+    }
+
+    .btn-fly-in {
+      opacity: 0;
+      transform: translateY(-160px) rotateX(45deg) scale(0.6);
+    }
+
+    .hero-stat-orbit-cluster {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .stat-orbit-beacon {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.2rem 2rem;
+      border-radius: 50px;
+      background: linear-gradient(90deg, rgba(8, 12, 20, 0.85), rgba(223, 186, 115, 0.05));
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(223, 186, 115, 0.1);
+      transform-style: preserve-3d;
+      animation: orbitBeaconFloat 6s ease-in-out infinite alternate;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stat-orbit-beacon:nth-child(2) { animation-delay: -2s; }
+    .stat-orbit-beacon:nth-child(3) { animation-delay: -4s; }
+
+    @keyframes orbitBeaconFloat {
+      0% { transform: translateZ(10px) translateY(0px) rotateY(-5deg); }
+      100% { transform: translateZ(35px) translateY(-10px) rotateY(6deg); }
+    }
+
+    .stat-orbit-beacon:hover {
+      border-color: var(--gold-primary);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(223, 186, 115, 0.35);
+      transform: scale(1.04) translateZ(45px);
+    }
+
+    .beacon-core-orb {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff 0%, var(--gold-primary) 50%, #030509 100%);
+      box-shadow: 0 0 25px var(--gold-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #030509;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      animation: coreOrbPulse 3s infinite ease-in-out;
+    }
+
+    @keyframes coreOrbPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px var(--gold-primary)); }
+      50% { transform: scale(1.12); filter: drop-shadow(0 0 20px var(--gold-glow)); }
+    }
+
+    .beacon-info h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--gold-primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .beacon-info p {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* -------------------------------------------------------------
+       5. SERVICES: FULLY RESPONSIVE SPATIAL ORBIT NODES (FIXED)
+    ------------------------------------------------------------- */
+    .section-headline-group {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem auto;
+      transform-style: preserve-3d;
+    }
+
+    .section-eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      display: block;
+      animation: textShimmer 4s linear infinite;
+    }
+
+    .section-main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .animated-shimmer-text {
+      background: linear-gradient(90deg, #f8fafc 0%, #dfba73 50%, #f8fafc 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textShimmer 4s linear infinite;
+    }
+
+    @keyframes textShimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* Responsive Grid for Capabilities */
+    .services-spatial-orbit-stream {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem 2rem;
+      width: 100%;
+      perspective: 1200px;
+    }
+
+    .spatial-service-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding: 1.8rem 1.6rem;
+      border-radius: 20px;
+      background: rgba(8, 12, 20, 0.65);
+      border: 1px solid rgba(223, 186, 115, 0.15);
+      backdrop-filter: blur(16px);
+      transform-style: preserve-3d;
+      animation: spatialNodeOrbit 8s ease-in-out infinite alternate;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spatial-service-node:nth-child(2) { animation-delay: -1.5s; }
+    .spatial-service-node:nth-child(3) { animation-delay: -3s; }
+    .spatial-service-node:nth-child(4) { animation-delay: -4.5s; }
+    .spatial-service-node:nth-child(5) { animation-delay: -6s; }
+    .spatial-service-node:nth-child(6) { animation-delay: -7.5s; }
+
+    @keyframes spatialNodeOrbit {
+      0% { transform: translateY(0px) rotateY(-5deg) translateZ(0px); }
+      50% { transform: translateY(-10px) rotateY(5deg) translateZ(25px); }
+      100% { transform: translateY(-3px) rotateY(-2deg) translateZ(12px); }
+    }
+
+    .spatial-service-node:hover {
+      border-color: var(--gold-primary);
+      background: rgba(8, 12, 20, 0.9);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(223, 186, 115, 0.25);
+      transform: scale(1.03) translateZ(40px);
+    }
+
+    .node-glyph-satellite {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(223, 186, 115, 0.25), rgba(7, 10, 18, 0.95));
+      border: 1.5px solid var(--gold-primary);
+      box-shadow: 0 0 25px rgba(223, 186, 115, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      color: var(--gold-primary);
+      flex-shrink: 0;
+      transform-style: preserve-3d;
+      animation: glyphSpin3D 8s infinite linear;
+    }
+
+    @keyframes glyphSpin3D {
+      0% { transform: rotateY(0deg) rotateZ(0deg); }
+      100% { transform: rotateY(360deg) rotateZ(360deg); }
+    }
+
+    .node-content-body {
+      flex: 1;
+    }
+
+    .spatial-service-node h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+    }
+
+    .spatial-service-node p {
+      color: var(--text-soft);
+      font-size: 0.92rem;
+      line-height: 1.75;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .node-energy-trace {
+      width: 40px;
+      height: 2px;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 10px var(--gold-primary);
+      margin-top: 1rem;
+      transition: width 0.4s ease;
+    }
+
+    .spatial-service-node:hover .node-energy-trace {
+      width: 100%;
+    }
+
+    /* -------------------------------------------------------------
+       6. ABOUT: 3D HOLOGRAPHIC PILLARS
+    ------------------------------------------------------------- */
+    .about-pillars-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      width: 100%;
+      perspective: 1200px;
+    }
+
+    .about-pillar {
+      border-left: 2px solid var(--border-gold);
+      padding: 1rem 0 1rem 2rem;
+      transform-style: preserve-3d;
+      animation: pillarMove3D 7s ease-in-out infinite alternate;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .about-pillar:nth-child(2) { animation-delay: -2.5s; }
+    .about-pillar:nth-child(3) { animation-delay: -5s; }
+
+    @keyframes pillarMove3D {
+      0% { transform: translateZ(5px) rotateY(-5deg); }
+      100% { transform: translateZ(30px) rotateY(6deg) translateY(-8px); }
+    }
+
+    .about-pillar::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 1.5rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold-primary);
+      box-shadow: 0 0 15px var(--gold-primary);
+    }
+
+    .about-pillar:hover {
+      border-left-color: var(--gold-primary);
+      transform: scale(1.03) translateZ(40px);
+    }
+
+    .about-pillar h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.8rem;
+    }
+
+    .about-pillar p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+
+    /* -------------------------------------------------------------
+       7. HOW WE DELIVER RESULTS: 3D KINETIC ENERGY STREAM
+    ------------------------------------------------------------- */
+    .delivery-results-spatial-track {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2.8rem;
+      width: 100%;
+      perspective: 1200px;
+      padding: 2rem 0;
+    }
+
+    .delivery-results-spatial-track::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, var(--gold-primary), #ff9d42, var(--gold-primary), transparent);
+      box-shadow: 0 0 20px var(--gold-primary);
+      transform: translateX(-50%);
+    }
+
+    .delivery-phase-stream {
+      display: grid;
+      grid-template-columns: 1fr 120px 1fr;
+      align-items: center;
+      transform-style: preserve-3d;
+      animation: deliveryPhaseFloat 8s ease-in-out infinite alternate;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .delivery-phase-stream:nth-child(odd) .phase-desc-block {
+      text-align: right;
+      grid-column: 1;
+    }
+
+    .delivery-phase-stream:nth-child(odd) .phase-beacon-center {
+      grid-column: 2;
+    }
+
+    .delivery-phase-stream:nth-child(odd) .phase-empty-space {
+      grid-column: 3;
+    }
+
+    .delivery-phase-stream:nth-child(even) .phase-empty-space {
+      grid-column: 1;
+    }
+
+    .delivery-phase-stream:nth-child(even) .phase-beacon-center {
+      grid-column: 2;
+    }
+
+    .delivery-phase-stream:nth-child(even) .phase-desc-block {
+      text-align: left;
+      grid-column: 3;
+    }
+
+    .delivery-phase-stream:nth-child(2) { animation-delay: -1.6s; }
+    .delivery-phase-stream:nth-child(3) { animation-delay: -3.2s; }
+    .delivery-phase-stream:nth-child(4) { animation-delay: -4.8s; }
+    .delivery-phase-stream:nth-child(5) { animation-delay: -6.4s; }
+
+    @keyframes deliveryPhaseFloat {
+      0% { transform: translateY(0px) translateZ(10px) rotateY(-4deg); }
+      100% { transform: translateY(-12px) translateZ(40px) rotateY(6deg); }
+    }
+
+    .delivery-phase-stream:hover {
+      transform: scale(1.05) translateZ(60px);
+    }
+
+    .phase-beacon-center {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+    }
+
+    .phase-gyro-ring-outer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1.5px dashed var(--gold-primary);
+      animation: gyroSpinOuter 8s linear infinite;
+    }
+
+    .phase-gyro-ring-inner {
+      position: absolute;
+      width: 78%;
+      height: 78%;
+      border-radius: 50%;
+      border: 1px solid #ff9d42;
+      animation: gyroSpinInner 6s linear infinite reverse;
+    }
+
+    @keyframes gyroSpinOuter {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes gyroSpinInner {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .phase-core-digit {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff 0%, var(--gold-primary) 50%, #030509 100%);
+      color: #030509;
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px var(--gold-primary);
+      z-index: 2;
+    }
+
+    .phase-desc-block h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.45rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .phase-desc-block p {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      line-height: 1.7;
+      max-width: 440px;
+      display: inline-block;
+    }
+
+    /* -------------------------------------------------------------
+       8. CONTACT: SPATIAL TELEMETRY TERMINAL
+    ------------------------------------------------------------- */
+    .contact-spatial-telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 3.5rem;
+      width: 100%;
+      perspective: 1200px;
+    }
+
+    .contact-telemetry-side {
+      transform-style: preserve-3d;
+      animation: contactSideFloat 7s ease-in-out infinite alternate;
+      border-left: 2px solid var(--border-gold);
+      padding-left: 2rem;
+    }
+
+    @keyframes contactSideFloat {
+      0% { transform: translateZ(5px) rotateY(-4deg); }
+      100% { transform: translateZ(28px) rotateY(6deg) translateY(-8px); }
+    }
+
+    .contact-telemetry-side h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--gold-primary);
+      margin-bottom: 1.8rem;
+    }
+
+    .contact-entry-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 1.4rem;
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
+    .contact-entry-row i {
+      font-size: 1.2rem;
+      color: var(--gold-primary);
+    }
+
+    .contact-form-side {
+      transform-style: preserve-3d;
+      animation: contactFormFloat 7s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes contactFormFloat {
+      0% { transform: translateZ(10px) translateY(0px); }
+      100% { transform: translateZ(35px) translateY(-10px); }
+    }
+
+    .input-spatial {
+      width: 100%;
+      padding: 1.1rem 1.4rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      margin-bottom: 1.3rem;
+      transition: all 0.3s;
+    }
+
+    .input-spatial:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 25px rgba(223, 186, 115, 0.35);
+      background: rgba(223, 186, 115, 0.04);
+    }
+
+    /* -------------------------------------------------------------
+       9. 3D STATUS HUD BOTTOM BAR
+    ------------------------------------------------------------- */
+    .spatial-device-hud-3d {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateZ(30px);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(8, 12, 20, 0.94);
+      border: 1px solid var(--border-gold);
+      padding: 9px 26px;
+      border-radius: 35px;
+      font-size: 0.72rem;
+      color: var(--gold-primary);
+      letter-spacing: 1.2px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(223, 186, 115, 0.25);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform-style: preserve-3d;
+      animation: bottomHud3DMovement 4s ease-in-out infinite alternate;
+      transition: opacity 1s;
+    }
+
+    .spatial-device-hud-3d.revealed {
+      opacity: 1;
+    }
+
+    @keyframes bottomHud3DMovement {
+      0% {
+        transform: translateX(-50%) translateY(0px) rotateX(0deg) scale(1);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.7), 0 0 20px rgba(223, 186, 115, 0.2);
+      }
+      100% {
+        transform: translateX(-50%) translateY(-6px) rotateX(10deg) scale(1.03);
+        box-shadow: 0 25px 45px rgba(0,0,0,0.9), 0 0 35px rgba(223, 186, 115, 0.45);
+      }
+    }
+
+    /* -------------------------------------------------------------
+       10. 3D LUXURY KINETIC CONSTELLATION FOOTER
+    ------------------------------------------------------------- */
+    .luxury-3d-footer {
+      position: relative;
+      z-index: 2;
+      padding: 100px 0 90px 0;
+      background: radial-gradient(circle at 50% 0%, #0d1424 0%, #020306 80%);
+      border-top: 1px solid var(--border-gold);
+      perspective: 1400px;
+    }
+
+    .footer-constellation-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      gap: 3rem;
+      margin-bottom: 60px;
+      transform-style: preserve-3d;
+    }
+
+    .footer-constellation-cluster {
+      transform-style: preserve-3d;
+      animation: footerClusterFloat 8s ease-in-out infinite alternate;
+      transition: transform 0.4s ease;
+    }
+
+    .footer-constellation-cluster:nth-child(2) { animation-delay: -2s; }
+    .footer-constellation-cluster:nth-child(3) { animation-delay: -4s; }
+    .footer-constellation-cluster:nth-child(4) { animation-delay: -6s; }
+
+    @keyframes footerClusterFloat {
+      0% { transform: translateZ(5px) rotateY(-4deg); }
+      100% { transform: translateZ(28px) rotateY(5deg) translateY(-6px); }
+    }
+
+    .footer-brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-brand-title span {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.8;
+      margin-bottom: 1.8rem;
+    }
+
+    .footer-col-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      color: var(--gold-primary);
+      letter-spacing: 1.5px;
+      margin-bottom: 1.4rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-col-heading::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 28px;
+      height: 2px;
+      background: var(--gold-gradient);
+      box-shadow: 0 0 10px var(--gold-primary);
+    }
+
+    .footer-nav-list {
+      list-style: none;
+    }
+
+    .footer-nav-list li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-nav-list li a, .footer-nav-list li span {
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-nav-list li a:hover {
+      color: #fff;
+      transform: translateX(6px);
+      text-shadow: 0 0 12px rgba(223, 186, 115, 0.8);
+    }
+
+    .footer-social-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-3d-orb {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(223, 186, 115, 0.08);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-primary);
+      font-size: 1.05rem;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px rgba(223, 186, 115, 0.15);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .social-3d-orb:hover {
+      background: var(--gold-gradient);
+      color: #030509;
+      transform: translateY(-6px) rotateY(180deg) scale(1.1);
+      box-shadow: 0 0 30px var(--gold-primary);
+      border-color: #fff;
+    }
+
+    .footer-bottom-3d {
+      border: 1px solid var(--border-gold);
+      border-radius: 40px;
+      background: rgba(8, 12, 20, 0.85);
+      backdrop-filter: blur(18px);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      flex-wrap: wrap;
+      gap: 15px;
+      transform-style: preserve-3d;
+    }
+
+    .footer-bottom-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Cinzel', serif;
+      color: var(--gold-primary);
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+    }
+
+    /* -------------------------------------------------------------
+       RESPONSIVE BREAKPOINTS (FIXED CAPABILITIES OVERFLOW)
+    ------------------------------------------------------------- */
+    @media (max-width: 992px) {
+      .header-floating-wrapper { top: 8px; padding: 0 0.8rem; }
+      header { height: 46px; padding: 0 1rem; }
+      .brand-logo-3d { font-size: 0.95rem; }
+      nav { display: none; }
+      .btn-spatial-primary { padding: 0.4rem 0.85rem; font-size: 0.7rem; }
+      section { padding: 85px 0 60px 0; }
+      .hero-layout, .contact-spatial-telemetry-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-constellation-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .kinetic-3d-title { font-size: 2.4rem; }
+      .hero-subtext-3d { font-size: 1rem; margin-bottom: 1.8rem; }
+      .spatial-device-hud-3d { font-size: 0.62rem; padding: 6px 14px; bottom: 10px; }
+      .hero-btn-container { gap: 0.8rem; }
+      .btn-spatial-ghost { padding: 0.7rem 1.4rem; font-size: 0.78rem; }
+
+      /* Capabilities Grid Fix for Tablet/Mobile */
+      .services-spatial-orbit-stream {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+      }
+      .spatial-service-node {
+        padding: 1.4rem 1.2rem;
+        gap: 1.2rem;
+      }
+      .node-glyph-satellite {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+      }
+
+      /* Delivery Stream Alignment */
+      .delivery-results-spatial-track::before { left: 30px; transform: none; }
+      .delivery-phase-stream { display: flex; flex-direction: column; align-items: flex-start; padding-left: 70px; position: relative; }
+      .phase-beacon-center { position: absolute; left: 0; top: 0; width: 60px; height: 60px; margin: 0; }
+      .phase-core-digit { width: 36px; height: 36px; font-size: 0.95rem; }
+      .delivery-phase-stream:nth-child(odd) .phase-desc-block,
+      .delivery-phase-stream:nth-child(even) .phase-desc-block { text-align: left; }
+      .phase-empty-space { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .footer-constellation-grid { grid-template-columns: 1fr; }
+      .footer-bottom-3d { flex-direction: column; text-align: center; justify-content: center; }
+      .spatial-service-node {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .node-glyph-satellite {
+        position: relative;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. INTRO LOADER OVERLAY -->
+  <div id="intro-overlay">
+    <div class="intro-hud">
+      <div class="intro-telemetry">
+        <div class="pulse-gem"></div>
+        <span>CLICKORMEDIA // DIGITAL OPERATIONS ACTIVE</span>
+      </div>
+      <h1 class="intro-main-title">
+        Click<span>Or</span>Media
+      </h1>
+      <p class="intro-desc">
+        A premier full-service digital marketing, custom web engineering, and search authority agency dedicated to scaling modern brands.
+      </p>
+
+      <div class="intro-progress-container">
+        <div class="intro-progress-bar" id="progressBar"></div>
+      </div>
+      <div class="intro-counter" id="progressCounter">CONNECTING TELEMETRY: 0%</div>
+
+      <button class="btn-enter-universe" id="enterBtn" style="display: none;">
+        INITIALIZE UNIVERSE <i class="fa-solid fa-gem fa-spin"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. FULLSCREEN 360° WEBGL CANVAS -->
+  <canvas id="spatial-canvas"></canvas>
+
+  <!-- 3. OFFICIAL CLICKORMEDIA 3D STATUS HUD (BOTTOM BAR) -->
+  <div class="spatial-device-hud-3d" id="bottomHud">
+    <i class="fa-solid fa-circle-dot fa-beat" style="color: #00ff88; font-size: 0.65rem;"></i>
+    <span class="animated-shimmer-text">CLICKORMEDIA HQ // BATHINDA, PUNJAB • MON–SAT 9:00 AM–6:00 PM • +91 6284754552</span>
+  </div>
+
+  <!-- 4. MAIN SPATIAL HTML CONTENT -->
+  <div class="viewport-content-layer" id="mainWebsiteWrapper">
+    <!-- Slim 3D Floating Header Bar -->
+    <div class="header-floating-wrapper">
+      <header>
+        <a href="#" class="brand-logo-3d clickable-ui">
+          <div class="cube-holo-3d">
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+          </div>
+          Click<span>Or</span>Media
+        </a>
+        <nav class="clickable-ui">
+          <a href="#services">SERVICES</a>
+          <a href="#about">ABOUT</a>
+          <a href="#process">METHODOLOGY</a>
+          <a href="#contact">CONTACT</a>
+        </nav>
+        <a href="#contact" class="btn-spatial-primary clickable-ui">
+          <i class="fa-solid fa-bolt"></i> GET FREE AUDIT
+        </a>
+      </header>
+    </div>
+
+    <div class="container">
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-layout">
+          <div class="anim-hero-text">
+            <div class="spatial-pill-3d clickable-ui">
+              <i class="fa-solid fa-crown fa-beat-fade"></i> FULL-SERVICE DIGITAL AGENCY
+            </div>
+
+            <h1 class="kinetic-3d-title">
+              Creative Strategy.<br>
+              <span class="glow-highlight">Measurable Growth.</span>
+            </h1>
+
+            <p class="hero-subtext-3d">
+              ClickOrMedia helps ambitious brands scale through data-driven digital marketing, bespoke web development, search engine dominance, and high-impact visual storytelling.
+            </p>
+
+            <div class="hero-btn-container clickable-ui">
+              <a href="#services" class="btn-spatial-ghost btn-fly-in" id="exploreBtn">
+                <span class="typewriter-text" data-text="EXPLORE SERVICES">EXPLORE SERVICES</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+              <a href="#contact" class="btn-spatial-ghost btn-fly-in" id="talkBtn">
+                <span class="typewriter-text" data-text="LET'S TALK">LET'S TALK</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 3D Moving Hologram Beacon Cluster -->
+          <div class="hero-stat-orbit-cluster clickable-ui">
+            <div class="stat-orbit-beacon">
+              <div class="beacon-core-orb"><i class="fa-solid fa-award"></i></div>
+              <div class="beacon-info">
+                <h3 class="animated-shimmer-text">98%</h3>
+                <p>Client Satisfaction Rate</p>
+              </div>
+            </div>
+
+            <div class="stat-orbit-beacon">
+              <div class="beacon-core-orb"><i class="fa-solid fa-rocket"></i></div>
+              <div class="beacon-info">
+                <h3 class="animated-shimmer-text">100+</h3>
+                <p>High-Impact Deliveries</p>
+              </div>
+            </div>
+
+            <div class="stat-orbit-beacon">
+              <div class="beacon-core-orb"><i class="fa-solid fa-chart-line"></i></div>
+              <div class="beacon-info">
+                <h3 class="animated-shimmer-text">5.4x</h3>
+                <p>Average Campaign Lift</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Section (Capabilities Fully Responsive & Visible) -->
+      <section id="services">
+        <div style="width: 100%;">
+          <div class="section-headline-group anim-reveal">
+            <span class="section-eyebrow">WHAT WE EXCEL AT</span>
+            <h2 class="section-main-title">END-TO-END CAPABILITIES</h2>
+          </div>
+
+          <div class="services-spatial-orbit-stream">
+            <div class="spatial-service-node clickable-ui">
+              <div class="node-glyph-satellite"><i class="fa-solid fa-bullseye"></i></div>
+              <div class="node-content-body">
+                <h3 class="animated-shimmer-text">Digital Marketing & Ads</h3>
+                <p>Data-driven performance campaigns across Google Ads, Meta, and multi-channel acquisition funnels designed to deliver maximum customer acquisition.</p>
+                <div class="node-energy-trace"></div>
+              </div>
+            </div>
+
+            <div class="spatial-service-node clickable-ui">
+              <div class="node-glyph-satellite"><i class="fa-solid fa-code"></i></div>
+              <div class="node-content-body">
+                <h3 class="animated-shimmer-text">Web Design & Development</h3>
+                <p>Custom-built, ultra-responsive web platforms engineered with cutting-edge frontends, modern animations, and frictionless user journeys.</p>
+                <div class="node-energy-trace"></div>
+              </div>
+            </div>
+
+            <div class="spatial-service-node clickable-ui">
+              <div class="node-glyph-satellite"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+              <div class="node-content-body">
+                <h3 class="animated-shimmer-text">SEO & Search Visibility</h3>
+                <p>Comprehensive search engine optimization, technical entity audits, and keyword dominance strategies to elevate your rankings and capture organic buyer intent.</p>
+                <div class="node-energy-trace"></div>
+              </div>
+            </div>
+
+            <div class="spatial-service-node clickable-ui">
+              <div class="node-glyph-satellite"><i class="fa-solid fa-share-nodes"></i></div>
+              <div class="node-content-body">
+                <h3 class="animated-shimmer-text">Social Media Management</h3>
+                <p>Strategic organic community building, viral content scheduling, and creative storytelling that transform casual followers into loyal brand advocates.</p>
+                <div class="node-energy-trace"></div>
+              </div>
+            </div>
+
+            <div class="spatial-service-node clickable-ui">
+              <div class="node-glyph-satellite"><i class="fa-solid fa-paint-brush"></i></div>
+              <div class="node-content-body">
+                <h3 class="animated-shimmer-text">Brand Identity & Design</h3>
+                <p>Bespoke visual identity systems, iconic logo design, typography styling, and marketing collateral that establish unmatched credibility.</p>
+                <div class="node-energy-trace"></div>
+              </div>
+            </div>
+
+            <div class="spatial-service-node clickable-ui">
+              <div class="node-glyph-satellite"><i class="fa-solid fa-video"></i></div>
+              <div class="node-content-body">
+                <h3 class="animated-shimmer-text">Video & Motion Graphics</h3>
+                <p>High-retention video production, promotional commercials, dynamic animations, and viral short-form media crafted for maximum engagement.</p>
+                <div class="node-energy-trace"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about">
+        <div style="width: 100%;">
+          <div class="section-headline-group anim-reveal">
+            <span class="section-eyebrow">THE CLICKORMEDIA DIFFERENCE</span>
+            <h2 class="section-main-title">WHY BRANDS CHOOSE US</h2>
+          </div>
+
+          <div class="about-pillars-container">
+            <div class="about-pillar clickable-ui">
+              <h3 class="animated-shimmer-text">Data-Driven Execution</h3>
+              <p>Every decision, design element, and campaign metric is grounded in analytics and conversion intelligence rather than guesswork.</p>
+            </div>
+
+            <div class="about-pillar clickable-ui">
+              <h3 class="animated-shimmer-text">Complete Transparency</h3>
+              <p>Clear reporting, regular progress milestones, and dedicated project managers ensure you are always in control of your growth trajectory.</p>
+            </div>
+
+            <div class="about-pillar clickable-ui">
+              <h3 class="animated-shimmer-text">End-to-End Scalability</h3>
+              <p>From initial design concepts and custom software development to marketing distribution, we handle the full brand lifecycle.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Process Section -->
+      <section id="process">
+        <div style="width: 100%;">
+          <div class="section-headline-group anim-reveal">
+            <span class="section-eyebrow">OUR PROVEN BLUEPRINT</span>
+            <h2 class="section-main-title">HOW WE DELIVER RESULTS</h2>
+          </div>
+
+          <div class="delivery-results-spatial-track">
+            <!-- Phase 1 -->
+            <div class="delivery-phase-stream clickable-ui">
+              <div class="phase-desc-block">
+                <h4 class="animated-shimmer-text">01 // DISCOVERY AUDIT</h4>
+                <p>In-depth telemetry analysis of your brand, market competitors, audience intent, and core revenue objectives.</p>
+              </div>
+              <div class="phase-beacon-center">
+                <div class="phase-gyro-ring-outer"></div>
+                <div class="phase-gyro-ring-inner"></div>
+                <div class="phase-core-digit">01</div>
+              </div>
+              <div class="phase-empty-space"></div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="delivery-phase-stream clickable-ui">
+              <div class="phase-empty-space"></div>
+              <div class="phase-beacon-center">
+                <div class="phase-gyro-ring-outer"></div>
+                <div class="phase-gyro-ring-inner"></div>
+                <div class="phase-core-digit">02</div>
+              </div>
+              <div class="phase-desc-block">
+                <h4 class="animated-shimmer-text">02 // GROWTH STRATEGY</h4>
+                <p>Custom data-driven blueprint detailing campaign funnels, technology stack choices, and concrete KPI milestones.</p>
+              </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="delivery-phase-stream clickable-ui">
+              <div class="phase-desc-block">
+                <h4 class="animated-shimmer-text">03 // AGILE CREATION</h4>
+                <p>Rapid deployment of high-converting visual assets, custom web software architecture, and promotional creatives.</p>
+              </div>
+              <div class="phase-beacon-center">
+                <div class="phase-gyro-ring-outer"></div>
+                <div class="phase-gyro-ring-inner"></div>
+                <div class="phase-core-digit">03</div>
+              </div>
+              <div class="phase-empty-space"></div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="delivery-phase-stream clickable-ui">
+              <div class="phase-empty-space"></div>
+              <div class="phase-beacon-center">
+                <div class="phase-gyro-ring-outer"></div>
+                <div class="phase-gyro-ring-inner"></div>
+                <div class="phase-core-digit">04</div>
+              </div>
+              <div class="phase-desc-block">
+                <h4 class="animated-shimmer-text">04 // SYSTEM LAUNCH</h4>
+                <p>Seamless execution across targeted advertising platforms, search indexes, and ultra-fast web channels.</p>
+              </div>
+            </div>
+
+            <!-- Phase 5 -->
+            <div class="delivery-phase-stream clickable-ui">
+              <div class="phase-desc-block">
+                <h4 class="animated-shimmer-text">05 // CONTINUOUS OPTIMIZATION</h4>
+                <p>Rigorous split-testing, automated analytics telemetry, and algorithmic scaling to secure maximum Return on Investment.</p>
+              </div>
+              <div class="phase-beacon-center">
+                <div class="phase-gyro-ring-outer"></div>
+                <div class="phase-gyro-ring-inner"></div>
+                <div class="phase-core-digit">05</div>
+              </div>
+              <div class="phase-empty-space"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact">
+        <div style="width: 100%;">
+          <div class="section-headline-group anim-reveal">
+            <span class="section-eyebrow">START A PROJECT</span>
+            <h2 class="section-main-title">GET IN TOUCH WITH US</h2>
+          </div>
+
+          <div class="contact-spatial-telemetry-grid">
+            <div class="contact-telemetry-side clickable-ui">
+              <h3 class="animated-shimmer-text">AGENCY HEADQUARTERS</h3>
+              <div class="contact-entry-row">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Bathinda, Punjab 151001, India</span>
+              </div>
+              <div class="contact-entry-row">
+                <i class="fa-solid fa-envelope"></i>
+                <span>hr@clickormedia.com</span>
+              </div>
+              <div class="contact-entry-row">
+                <i class="fa-solid fa-phone"></i>
+                <span>+91 6284754552 | +91 1645002336</span>
+              </div>
+              <div class="contact-entry-row">
+                <i class="fa-solid fa-clock"></i>
+                <span>Mon – Sat: 9:00 AM – 6:00 PM</span>
+              </div>
+            </div>
+
+            <div class="contact-form-side clickable-ui">
+              <form onsubmit="event.preventDefault(); alert('Message dispatched! We will connect with you shortly.');">
+                <input type="text" class="input-spatial" placeholder="Your Full Name" required>
+                <input type="email" class="input-spatial" placeholder="Email Address" required>
+                <input type="text" class="input-spatial" placeholder="Brand / Business Name" required>
+                <textarea rows="4" class="input-spatial" placeholder="Describe your project goals or service requirements..." required></textarea>
+                <button type="submit" class="btn-spatial-ghost" style="width: 100%; justify-content: center; padding: 0.9rem 1.6rem; border-color: var(--gold-primary); color: #fff;">
+                  SEND MESSAGE <i class="fa-solid fa-paper-plane"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 5. BESPOKE 3D LUXURY KINETIC CONSTELLATION FOOTER -->
+    <footer class="luxury-3d-footer">
+      <div class="container">
+        <div class="footer-constellation-grid">
+          <div class="footer-constellation-cluster">
+            <div class="footer-brand-title">
+              <i class="fa-solid fa-crown" style="color: var(--gold-primary); font-size: 1.1rem;"></i>
+              <span>ClickOrMedia</span>
+            </div>
+            <p class="footer-brand-desc">
+              Empowering global brands through data-driven digital marketing, custom web platforms, search engine authority, and viral storytelling.
+            </p>
+            <div class="footer-social-row">
+              <a href="https://linkedin.com" target="_blank" class="social-3d-orb" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="https://instagram.com" target="_blank" class="social-3d-orb" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://facebook.com" target="_blank" class="social-3d-orb" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+              <a href="mailto:hr@clickormedia.com" class="social-3d-orb" title="Email"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-constellation-cluster">
+            <h5 class="footer-col-heading">Capabilities</h5>
+            <ul class="footer-nav-list">
+              <li><a href="#services"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Digital Marketing & PPC</a></li>
+              <li><a href="#services"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Web Design & Dev</a></li>
+              <li><a href="#services"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Search Optimization (SEO)</a></li>
+              <li><a href="#services"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Social Media Strategy</a></li>
+              <li><a href="#services"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Video & Motion Design</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-constellation-cluster">
+            <h5 class="footer-col-heading">Navigation</h5>
+            <ul class="footer-nav-list">
+              <li><a href="#hero"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Agency Home</a></li>
+              <li><a href="#services"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Capabilities</a></li>
+              <li><a href="#about"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Why Choose Us</a></li>
+              <li><a href="#process"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> 5-Step Methodology</a></li>
+              <li><a href="#contact"><i class="fa-solid fa-angle-right" style="color: var(--gold-primary); font-size: 0.7rem;"></i> Start a Project</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-constellation-cluster">
+            <h5 class="footer-col-heading">Headquarters</h5>
+            <ul class="footer-nav-list">
+              <li><span><i class="fa-solid fa-location-dot" style="color: var(--gold-primary);"></i> Bathinda, Punjab 151001, India</span></li>
+              <li><a href="mailto:hr@clickormedia.com"><i class="fa-solid fa-envelope" style="color: var(--gold-primary);"></i> hr@clickormedia.com</a></li>
+              <li><a href="tel:+916284754552"><i class="fa-solid fa-phone" style="color: var(--gold-primary);"></i> +91 6284754552</a></li>
+              <li><span><i class="fa-solid fa-clock" style="color: var(--gold-primary);"></i> Mon – Sat: 9:00 AM – 6:00 PM</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom-3d">
+          <div class="footer-bottom-badge">
+            <i class="fa-solid fa-shield-halved" style="color: var(--gold-primary);"></i>
+            <span>CLICKORMEDIA ARCHITECTURE • SOVEREIGN PERFORMANCE</span>
+          </div>
+          <div>© 2026 ClickOrMedia. All Rights Reserved. Engineered For Growth.</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 6. THREE.JS 3D SHOWROOM & PHYSICS SCRIPT -->
+  <script>
+    const canvas = document.getElementById('spatial-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x020408, 0.024);
+
+    const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 45);
+
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas: canvas, 
+      antialias: true, 
+      alpha: true, 
+      powerPreference: "high-performance" 
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const ambientLight = new THREE.AmbientLight(0xfff8ee, 0.85);
+    scene.add(ambientLight);
+
+    const goldKeyLight = new THREE.PointLight(0xe5c378, 4.5, 45);
+    goldKeyLight.position.set(7, 7, 8);
+    scene.add(goldKeyLight);
+
+    const amberFillLight = new THREE.PointLight(0xff9d42, 3.2, 40);
+    amberFillLight.position.set(-8, -4, 6);
+    scene.add(amberFillLight);
+
+    const master360Showroom = new THREE.Group();
+
+    // Procedural 3D Luxury Laptop
+    const laptopGroup = new THREE.Group();
+    const obsidianMetalMat = new THREE.MeshStandardMaterial({
+      color: 0x0c0e14,
+      roughness: 0.15,
+      metalness: 0.92,
+      emissive: 0x05070c
+    });
+
+    const goldTrimMat = new THREE.MeshStandardMaterial({
+      color: 0xe5c378,
+      roughness: 0.1,
+      metalness: 0.95
+    });
+
+    const laptopBase = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.14, 2.5), obsidianMetalMat);
+    laptopGroup.add(laptopBase);
+
+    const laptopTrim = new THREE.Mesh(new THREE.BoxGeometry(3.84, 0.03, 2.54), goldTrimMat);
+    laptopTrim.position.set(0, -0.06, 0);
+    laptopGroup.add(laptopTrim);
+
+    const trackpad = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 0.02, 0.8),
+      new THREE.MeshStandardMaterial({ color: 0x141822, roughness: 0.3, metalness: 0.8 })
+    );
+    trackpad.position.set(0, 0.08, 0.65);
+    laptopGroup.add(trackpad);
+
+    const screenHinge = new THREE.Group();
+    screenHinge.position.set(0, 0.07, -1.25);
+    
+    const screenFrame = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.4, 0.08), obsidianMetalMat);
+    screenFrame.position.set(0, 1.2, 0);
+    
+    const screenDisplay = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.5, 2.1),
+      new THREE.MeshBasicMaterial({ color: 0xe5c378, wireframe: true, transparent: true, opacity: 0.85 })
+    );
+    screenDisplay.position.set(0, 1.2, 0.045);
+
+    screenHinge.add(screenFrame);
+    screenHinge.add(screenDisplay);
+    screenHinge.rotation.x = -Math.PI / 10;
+    laptopGroup.add(screenHinge);
+
+    laptopGroup.position.set(2.8, -0.4, 0);
+    laptopGroup.rotation.set(0.2, -0.5, 0.1);
+    master360Showroom.add(laptopGroup);
+
+    // Procedural 3D Luxury Glass Phone
+    const phoneGroup = new THREE.Group();
+    const phoneBody = new THREE.Mesh(new THREE.BoxGeometry(1.25, 2.5, 0.1), obsidianMetalMat);
+    
+    const phoneGoldEdge = new THREE.Mesh(new THREE.BoxGeometry(1.28, 2.53, 0.03), goldTrimMat);
+    phoneGroup.add(phoneGoldEdge);
+
+    const phoneScreen = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 2.35),
+      new THREE.MeshBasicMaterial({ color: 0xff9d42, wireframe: true, transparent: true, opacity: 0.85 })
+    );
+    phoneScreen.position.set(0, 0, 0.055);
+
+    phoneGroup.add(phoneBody);
+    phoneGroup.add(phoneScreen);
+    phoneGroup.position.set(-3.2, 1.2, 2);
+    phoneGroup.rotation.set(-0.2, 0.5, -0.15);
+    master360Showroom.add(phoneGroup);
+
+    // Halo Rings
+    const ring1 = new THREE.Mesh(
+      new THREE.TorusGeometry(5.0, 0.035, 16, 120),
+      new THREE.MeshBasicMaterial({ color: 0xe5c378, transparent: true, opacity: 0.6 })
+    );
+    master360Showroom.add(ring1);
+
+    const ring2 = new THREE.Mesh(
+      new THREE.TorusGeometry(6.4, 0.025, 16, 120),
+      new THREE.MeshBasicMaterial({ color: 0xff9d42, transparent: true, opacity: 0.4 })
+    );
+    ring2.rotation.x = Math.PI / 2;
+    master360Showroom.add(ring2);
+
+    master360Showroom.scale.set(0.2, 0.2, 0.2);
+    scene.add(master360Showroom);
+
+    // Floating Crystals
+    const crystals = [];
+    const geoms = [
+      new THREE.OctahedronGeometry(0.65, 0),
+      new THREE.IcosahedronGeometry(0.5, 0),
+      new THREE.TetrahedronGeometry(0.6, 0)
+    ];
+
+    for (let i = 0; i < 45; i++) {
+      const g = geoms[Math.floor(Math.random() * geoms.length)];
+      const m = new THREE.MeshStandardMaterial({
+        color: Math.random() > 0.5 ? 0xe5c378 : 0xff9d42,
+        roughness: 0.15,
+        metalness: 0.9,
+        wireframe: Math.random() > 0.65
+      });
+      const mesh = new THREE.Mesh(g, m);
+      mesh.position.set(
+        (Math.random() - 0.5) * 34,
+        (Math.random() - 0.5) * 34,
+        (Math.random() - 0.5) * 28
+      );
+      mesh.userData = {
+        speedX: (Math.random() - 0.5) * 0.016,
+        speedY: (Math.random() - 0.5) * 0.016,
+        startY: mesh.position.y
+      };
+      scene.add(mesh);
+      crystals.push(mesh);
+    }
+
+    // Star Dust Field
+    const dustCount = 2200;
+    const dustGeo = new THREE.BufferGeometry();
+    const dustPositions = new Float32Array(dustCount * 3);
+
+    for (let i = 0; i < dustCount * 3; i += 3) {
+      dustPositions[i] = (Math.random() - 0.5) * 130;
+      dustPositions[i + 1] = (Math.random() - 0.5) * 130;
+      dustPositions[i + 2] = (Math.random() - 0.5) * 130;
+    }
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+    const dustMat = new THREE.PointsMaterial({ size: 0.065, color: 0xe5c378, transparent: true, opacity: 0.85 });
+    const dustField = new THREE.Points(dustGeo, dustMat);
+    scene.add(dustField);
+
+    // Automatic Intro Sequence
+    let loadProgress = 0;
+    const progressBar = document.getElementById('progressBar');
+    const progressCounter = document.getElementById('progressCounter');
+    const introOverlay = document.getElementById('intro-overlay');
+    const mainWebsiteWrapper = document.getElementById('mainWebsiteWrapper');
+    const bottomHud = document.getElementById('bottomHud');
+
+    const loaderInterval = setInterval(() => {
+      loadProgress += Math.floor(Math.random() * 9) + 5;
+      if (loadProgress >= 100) {
+        loadProgress = 100;
+        clearInterval(loaderInterval);
+        progressBar.style.width = '100%';
+        progressCounter.innerText = 'STATUS: ONLINE (100%)';
+        
+        setTimeout(triggerAutomaticReveal, 400);
+      } else {
+        progressBar.style.width = loadProgress + '%';
+        progressCounter.innerText = `CONNECTING TELEMETRY: ${loadProgress}%`;
+      }
+    }, 40);
+
+    function triggerAutomaticReveal() {
+      introOverlay.classList.add('hidden');
+      document.body.style.overflowY = 'auto';
+
+      gsap.to(camera.position, {
+        z: 12,
+        duration: 2.2,
+        ease: 'power3.inOut'
+      });
+
+      gsap.to(master360Showroom.scale, {
+        x: (window.innerWidth < 768) ? 0.72 : 1,
+        y: (window.innerWidth < 768) ? 0.72 : 1,
+        z: (window.innerWidth < 768) ? 0.72 : 1,
+        duration: 2.4,
+        ease: 'elastic.out(1, 0.75)'
+      });
+
+      setTimeout(() => {
+        mainWebsiteWrapper.classList.add('revealed');
+        bottomHud.classList.add('revealed');
+        
+        animateHeroButtons();
+      }, 700);
+    }
+
+    // Dynamic Top-Down Fly-in & Letter Assembly
+    function animateHeroButtons() {
+      gsap.to('.btn-fly-in', {
+        y: 0,
+        opacity: 1,
+        rotateX: 0,
+        scale: 1,
+        duration: 1.4,
+        stagger: 0.22,
+        ease: 'elastic.out(1, 0.7)',
+        onComplete: () => {
+          initLetterAssemblyEngine();
+        }
+      });
+    }
+
+    function initLetterAssemblyEngine() {
+      const textContainers = document.querySelectorAll('.typewriter-text');
+      
+      textContainers.forEach(container => {
+        const fullText = container.getAttribute('data-text');
+        container.innerHTML = '';
+        
+        for (let i = 0; i < fullText.length; i++) {
+          const span = document.createElement('span');
+          span.className = 'char-span';
+          span.innerText = fullText[i] === ' ' ? '\u00A0' : fullText[i];
+          container.appendChild(span);
+        }
+      });
+
+      function playAssemblyCycle() {
+        textContainers.forEach(container => {
+          const spans = container.querySelectorAll('.char-span');
+          
+          spans.forEach((span, index) => {
+            setTimeout(() => {
+              span.classList.add('is-visible');
+            }, index * 80);
+          });
+
+          setTimeout(() => {
+            spans.forEach((span, index) => {
+              setTimeout(() => {
+                span.classList.remove('is-visible');
+              }, index * 35);
+            });
+          }, 3800);
+        });
+
+        setTimeout(playAssemblyCycle, 4800);
+      }
+
+      playAssemblyCycle();
+    }
+
+    // 360° Drag & Gyroscope Physics
+    let isUserInteracting = false;
+    let pointerStartX = 0, pointerStartY = 0;
+    let velocityX = 0, velocityY = 0;
+    let orbitAngleX = 0, orbitAngleY = 0;
+
+    window.addEventListener('mousedown', (e) => {
+      isUserInteracting = true;
+      pointerStartX = e.clientX;
+      pointerStartY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isUserInteracting) {
+        const deltaX = e.clientX - pointerStartX;
+        const deltaY = e.clientY - pointerStartY;
+        velocityY = deltaX * 0.005;
+        velocityX = deltaY * 0.005;
+        orbitAngleY += velocityY;
+        orbitAngleX += velocityX;
+        pointerStartX = e.clientX;
+        pointerStartY = e.clientY;
+      }
+    });
+
+    window.addEventListener('mouseup', () => { isUserInteracting = false; });
+
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isUserInteracting = true;
+        pointerStartX = e.touches[0].clientX;
+        pointerStartY = e.touches[0].clientY;
+      }
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (isUserInteracting && e.touches.length === 1) {
+        const deltaX = e.touches[0].clientX - pointerStartX;
+        const deltaY = e.touches[0].clientY - pointerStartY;
+        velocityY = deltaX * 0.006;
+        velocityX = deltaY * 0.006;
+        orbitAngleY += velocityY;
+        orbitAngleX += velocityX;
+        pointerStartX = e.touches[0].clientX;
+        pointerStartY = e.touches[0].clientY;
+      }
+    });
+
+    window.addEventListener('touchend', () => { isUserInteracting = false; });
+
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', (e) => {
+        if (!isUserInteracting && e.gamma !== null && e.beta !== null) {
+          orbitAngleY += (e.gamma / 80) * 0.02;
+          orbitAngleX += ((e.beta - 45) / 80) * 0.02;
+        }
+      });
+    }
+
+    let scrollProgress = 0;
+    window.addEventListener('scroll', () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      scrollProgress = window.scrollY / (maxScroll || 1);
+    });
+
+    const clock = new THREE.Clock();
+
+    function render360() {
+      requestAnimationFrame(render360);
+      const time = clock.getElapsedTime();
+
+      if (!isUserInteracting) {
+        velocityX *= 0.94;
+        velocityY *= 0.94;
+        orbitAngleY += velocityY + 0.0028;
+        orbitAngleX += velocityX;
+      }
+
+      master360Showroom.rotation.y = orbitAngleY;
+      master360Showroom.rotation.x = orbitAngleX;
+
+      ring1.rotation.z += 0.008;
+      ring2.rotation.y += 0.008;
+
+      if (camera.position.z <= 15) {
+        camera.position.z = 12 - (scrollProgress * 6);
+        camera.position.y = -(scrollProgress * 18);
+        camera.position.x = Math.sin(scrollProgress * Math.PI) * 3;
+        camera.lookAt(0, -(scrollProgress * 18), 0);
+      }
+
+      crystals.forEach(crystal => {
+        crystal.rotation.x += crystal.userData.speedX;
+        crystal.rotation.y += crystal.userData.speedY;
+        crystal.position.y = crystal.userData.startY + Math.sin(time * 2 + crystal.position.x) * 0.7;
+      });
+
+      dustField.rotation.y = time * 0.008;
+
+      renderer.render(scene, camera);
+    }
+    render360();
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      if (window.innerWidth < 768) {
+        master360Showroom.position.set(0, 1.8, -4.5);
+      } else {
+        master360Showroom.position.set(0, 0, 0);
+      }
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+  </script>
+</body>
+</html>
